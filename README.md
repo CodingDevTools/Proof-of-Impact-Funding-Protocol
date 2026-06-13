@@ -4,17 +4,17 @@
 **Primary Track: Wildcard**
 
 > [!NOTE]
-> This README now describes the Stellar-oriented version of PIFP. Some folders and local tooling references in the repository still reflect an earlier prototype and should be treated as migration-era implementation details until the Stellar contract/tooling transition is fully completed.
+> PIFP was originally built as a Starknet prototype and is now being migrated and repositioned to Stellar. This README describes the current Stellar direction, while some folders, contract code, and local tooling references still reflect the earlier Starknet implementation during the transition period.
 
 ---
 
 ## Submission Summary (<=500 words)
 
-Proof-of-Impact Funding Protocol (PIFP) is a Stellar application that makes funding conditional on verifiable impact. Instead of relying on donors to trust intermediaries, PIFP escrows funds on-chain and releases them only after the required proof of completion is submitted and validated.
+Proof-of-Impact Funding Protocol (PIFP) began as a Starknet application and is now being adapted into a Stellar application that makes funding conditional on verifiable impact. Instead of relying on donors to trust intermediaries, PIFP escrows funds on-chain and releases them only after the required proof of completion is submitted and validated.
 
 In the current build, a creator opens a project with a funding goal, a fixed donation amount, a recipient, and a proof requirement hash. Donors contribute through an OTP-protected flow that enforces one donation per wallet per project. Donations are held in contract-controlled escrow using a configured Stellar asset. When the project implementer is ready to prove completion, the proof is hashed and submitted through the oracle-backed verification flow. If the submitted proof hash matches the expected hash stored for that project, the contract marks the project as completed and releases the escrowed funds to the recipient.
 
-The stack consists of a Soroban smart contract on Stellar, a Rust oracle service for OTP issuance and proof submission, and a Next.js frontend for project creation, donation, and verification. The oracle does not custody funds. Its role is limited to issuing short-lived action tokens after OTP verification and relaying authorized proof-related actions to Stellar.
+The current target stack consists of a Soroban smart contract on Stellar, a Rust oracle service for OTP issuance and proof submission, and a Next.js frontend for project creation, donation, and verification. The oracle does not custody funds. Its role is limited to issuing short-lived action tokens after OTP verification and relaying authorized proof-related actions to Stellar.
 
 From a privacy perspective, this version is privacy-aware rather than fully private. Raw evidence is not posted on-chain. Instead, the frontend and backend work with proof hashes, so integrity is anchored publicly while sensitive source material can remain off-chain. This reduces unnecessary exposure, but donation amounts, wallet addresses, and project state remain public on Stellar.
 
@@ -24,7 +24,7 @@ PIFP fits the Wildcard track best because the shipped product is a complete Stel
 
 ## 1. Project Overview
 
-**Proof-of-Impact Funding Protocol (PIFP)** is a Stellar funding platform that ensures donated funds are only released when verifiable real-world impact occurs.
+**Proof-of-Impact Funding Protocol (PIFP)** is a funding platform that started on Starknet and is now being transitioned to Stellar so donated funds are only released when verifiable real-world impact occurs.
 
 Traditional donation systems rely on trust in intermediaries such as NGOs, governments, or organizations. PIFP reduces trust assumptions with Soroban smart contracts, evidence hashing, and on-chain release conditions.
 
