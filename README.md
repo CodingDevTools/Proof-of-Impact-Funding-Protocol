@@ -1,29 +1,32 @@
 # Proof-of-Impact Funding Protocol (PIFP)
 
-## Starknet Re{define} Hackathon Project Document
+## Stellar Project Document
 **Primary Track: Wildcard**
+
+> [!NOTE]
+> This README now describes the Stellar-oriented version of PIFP. Some folders and local tooling references in the repository still reflect an earlier prototype and should be treated as migration-era implementation details until the Stellar contract/tooling transition is fully completed.
 
 ---
 
 ## Submission Summary (<=500 words)
 
-Proof-of-Impact Funding Protocol (PIFP) is a Starknet application that makes funding conditional on verifiable impact. Instead of relying on donors to trust intermediaries, PIFP escrows funds on-chain and releases them only after the required proof of completion is submitted and validated.
+Proof-of-Impact Funding Protocol (PIFP) is a Stellar application that makes funding conditional on verifiable impact. Instead of relying on donors to trust intermediaries, PIFP escrows funds on-chain and releases them only after the required proof of completion is submitted and validated.
 
-In the current build, a creator opens a project with a funding goal, a fixed donation amount, a recipient, and a proof requirement hash. Donors contribute through an OTP-protected flow that enforces one donation per wallet per project. Donations are held in contract-controlled escrow using a configured ERC20 payment token. When the project implementer is ready to prove completion, the proof is hashed and submitted through the oracle-backed verification flow. If the submitted proof hash matches the expected hash stored for that project, the contract marks the project as completed and releases the escrowed funds to the recipient.
+In the current build, a creator opens a project with a funding goal, a fixed donation amount, a recipient, and a proof requirement hash. Donors contribute through an OTP-protected flow that enforces one donation per wallet per project. Donations are held in contract-controlled escrow using a configured Stellar asset. When the project implementer is ready to prove completion, the proof is hashed and submitted through the oracle-backed verification flow. If the submitted proof hash matches the expected hash stored for that project, the contract marks the project as completed and releases the escrowed funds to the recipient.
 
-The stack consists of a Cairo smart contract on Starknet, a Rust oracle service for OTP issuance and proof submission, and a Next.js frontend for project creation, donation, and verification. The oracle does not custody funds. Its role is limited to issuing short-lived action tokens after OTP verification and relaying authorized proof-related actions to Starknet.
+The stack consists of a Soroban smart contract on Stellar, a Rust oracle service for OTP issuance and proof submission, and a Next.js frontend for project creation, donation, and verification. The oracle does not custody funds. Its role is limited to issuing short-lived action tokens after OTP verification and relaying authorized proof-related actions to Stellar.
 
-From a privacy perspective, this version is privacy-aware rather than fully private. Raw evidence is not posted on-chain. Instead, the frontend and backend work with proof hashes, so integrity is anchored publicly while sensitive source material can remain off-chain. This reduces unnecessary exposure, but donation amounts, wallet addresses, and project state remain public on Starknet.
+From a privacy perspective, this version is privacy-aware rather than fully private. Raw evidence is not posted on-chain. Instead, the frontend and backend work with proof hashes, so integrity is anchored publicly while sensitive source material can remain off-chain. This reduces unnecessary exposure, but donation amounts, wallet addresses, and project state remain public on Stellar.
 
-PIFP fits the Wildcard track best because the shipped product is a complete Starknet funding workflow with practical anti-abuse controls: OTP-gated actions, on-chain escrow, one-donation-per-wallet enforcement, proof-gated payout, and wallet activity tracking. Bitcoin support is roadmap-only in this version and not the core of the submission.
+PIFP fits the Wildcard track best because the shipped product is a complete Stellar funding workflow with practical anti-abuse controls: OTP-gated actions, on-chain escrow, one-donation-per-wallet enforcement, proof-gated payout, and wallet activity tracking. Bitcoin support is roadmap-only in this version and not the core of the submission.
 
 ---
 
 ## 1. Project Overview
 
-**Proof-of-Impact Funding Protocol (PIFP)** is a Starknet funding platform that ensures donated funds are only released when verifiable real-world impact occurs.
+**Proof-of-Impact Funding Protocol (PIFP)** is a Stellar funding platform that ensures donated funds are only released when verifiable real-world impact occurs.
 
-Traditional donation systems rely on trust in intermediaries such as NGOs, governments, or organizations. PIFP reduces trust assumptions with Starknet smart contracts, evidence hashing, and on-chain release conditions.
+Traditional donation systems rely on trust in intermediaries such as NGOs, governments, or organizations. PIFP reduces trust assumptions with Soroban smart contracts, evidence hashing, and on-chain release conditions.
 
 The system locks funds and releases them automatically when verified proof of project completion is submitted and validated.
 
@@ -71,14 +74,14 @@ A project creator registers a project with:
 
 ### Step 2: Donors Fund Project
 
-Users donate a fixed ERC20 amount into a Starknet-controlled escrow contract.
+Users donate a fixed Stellar asset amount into a Stellar-controlled escrow contract.
 The protocol enforces one donation per wallet per project and records a commitment marker to prevent reuse.
 
 ### Step 3: Proof Submission
 
 When the project is completed, the implementer submits proof (photo, sensor data, signed attestation, etc.).
 
-Backend oracle hashes proof and submits it to Starknet.
+Backend oracle hashes proof and submits it to Stellar.
 
 ### Step 4: Verification
 
@@ -97,12 +100,12 @@ PIFP currently uses **selective disclosure** and **hash commitments**, not full 
 What is private in this version:
 
 * Raw proof payload is hashed in-browser before submission
-* Only proof hash is submitted on-chain (`felt252`)
+* Only the proof hash is submitted on-chain
 * Project evidence can be disclosed off-chain while integrity stays anchored on-chain
 
 What is public in this version:
 
-* Donation transactions and sender addresses on Starknet
+* Donation transactions and sender addresses on Stellar
 * Project funding totals and completion status
 
 This model improves integrity and reduces unnecessary data exposure, but it is not a full anonymity system.
@@ -111,17 +114,17 @@ This model improves integrity and reduces unnecessary data exposure, but it is n
 
 ## 6. Bitcoin Roadmap
 
-This submission focuses on Starknet-native funding logic. Bitcoin-native settlement is planned as a next milestone.
+This submission focuses on Stellar-native funding logic. Bitcoin-native settlement is planned as a next milestone.
 
 Planned direction:
 
-1. BTC representation on Starknet
+1. BTC representation on Stellar
 2. Proof-gated release logic for BTC-backed value
 3. Optional bridge/routing integrations for Bitcoin liquidity
 
 ---
 
-## 7. Smart Contract Architecture (Cairo)
+## 7. Smart Contract Architecture (Soroban)
 
 ### Storage
 
@@ -146,7 +149,7 @@ Responsible for:
 
 * Proof hashing
 * Metadata storage
-* Starknet contract interaction
+* Stellar contract interaction
 * Optional Bitcoin monitoring
 
 Implemented in Rust for memory safety and performance.
@@ -161,7 +164,7 @@ It only relays verifiable data.
 Minimal interface:
 
 1. Create project
-2. Fund project with a fixed ERC20 donation amount
+2. Fund project with a fixed Stellar asset donation amount
 3. Submit proof
 4. Trigger payout
 
@@ -180,7 +183,7 @@ Minimal interface:
 ## 11. Demo Flow (3-Minute Video)
 
 1. Create water project
-2. Donors fund with the configured ERC20 payment token
+2. Donors fund with the configured Stellar asset
 3. Funds locked on-chain
 4. Installer uploads proof
 5. Contract verifies proof
@@ -192,7 +195,7 @@ Minimal interface:
 
 ### Primary: Wildcard
 
-PIFP delivers a complete Starknet funding product with anti-scam controls:
+PIFP delivers a complete Stellar funding product with anti-scam controls:
 
 * OTP-gated critical actions
 * Evidence-linked project creation
@@ -228,10 +231,10 @@ It replaces trust-based funding with cryptographic accountability.
 
 | Item | Value |
 | :--- | :--- |
-| **Starknet Contract** | `0x06360d50942e8ffa2a7ba97d471b75647663d14cade852ef3877cc9ba065b30c` (Sepolia) |
-| **Github Repository** | [PIFP Repository](https://github.com/ayomideadeniran/Proof-of-Impact-Funding-Protocol-PIFP-) |
+| **Stellar Contract** | `TBD` |
+| **Github Repository** | [PIFP Repository](https://github.com/CodingDevTools/Proof-of-Impact-Funding-Protocol) |
 | **Demo Video** | [Watch Demo Video](https://www.canva.com/design/DAHDjrg_Fg8/CnSZEWQmsk3EHgsr23g81g/watch?utm_content=DAHDjrg_Fg8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc87cb11c6e) |
-| **Starknet Wallet** | `0x55d8794dbdcea4eb7f855f7b667ae310e24253b105c57dc164cb8c4ac92a8c4` |
+| **Stellar Wallet** | `TBD` |
 | **Project Description** | See Section [Submission Summary](#submission-summary-500-words) |
 
 > [!TIP]
@@ -282,7 +285,7 @@ Or force a specific file:
 ORACLE_ENV_FILE=.env.local cargo run
 ```
 
-If `ORACLE_USE_SNCAST=true`, the bridge will invoke through your local `sncast` account instead of `starknet.js` signing. This is the preferred local path when your machine already has the correct Starknet account configured in `~/.starknet_accounts`.
+If `ORACLE_USE_SNCAST=true`, the bridge will invoke through your local `sncast` account instead of `starknet.js` signing. This is a legacy local-development path retained in the repo while the Stellar tooling migration is being completed.
 
 If the bridge logs `Account: invalid signature`, the issue is not the deployed contract. It means the local `ORACLE_PRIVATE_KEY` does not control `ORACLE_ACCOUNT_ADDRESS`, or that account uses a signer setup this bridge does not support.
 
@@ -316,7 +319,7 @@ If you already provision the accounts file another way, set `ORACLE_ACCOUNTS_FIL
 
 PIFP transforms global funding into a verifiable system where impact, not promises, controls payments.
 
-By combining Starknet execution, proof-gated release logic, and privacy-aware hashing, the protocol enables transparent and trust-minimized aid distribution.
+By combining Stellar execution, proof-gated release logic, and privacy-aware hashing, the protocol enables transparent and trust-minimized aid distribution.
 
 ---
 
@@ -342,7 +345,7 @@ The platform implements multi-layer security combining Web2 authentication prote
 
 ### A. Wallet Signature Authentication (Primary Identity)
 
-Users authenticate using Starknet wallet signatures instead of passwords.
+Users authenticate using Stellar wallet signatures instead of passwords.
 
 Flow:
 
